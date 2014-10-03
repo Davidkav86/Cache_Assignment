@@ -19,14 +19,17 @@ require 'dalli'
 
     def findISBN isbn
 
-   #   if @Remote_cache.get("#{isbn}") == nil
+      if @Remote_cache.get("v_#{isbn}") == nil
         
-         @database.findISBN isbn
+         book = @database.findISBN isbn
 
-   #      @Remote_cache.set "v_#{isbn}",1      # Create the version entry 
-     #    @Remote_cache.set "1_#{isbn}", book.to_cache # Create the book entry
-    #  else
-   #      checkRemoteCache isbn
+         @Remote_cache.set "v_#{isbn}",1      # Create the version entry 
+         @Remote_cache.set "1_#{isbn}", book.to_cache # Create the book entry
+
+         print " Cache set"
+      else
+         checkRemoteCache isbn
+      end
        
     end
 
@@ -45,22 +48,27 @@ require 'dalli'
     def deleteBook isbn
        @database.deleteBook isbn
     end
-end
 
-  #  def checkRemoteCache isbn
+    def checkRemoteCache isbn
       
        # get the current version of the book
-  #     version = @Remote_cache.get "v_#{isbn}"
+       version = @Remote_cache.get "v_#{isbn}"
       
        # get the correct version of the book     
-  #     serial = @Remote_cache.get "#{version}_#{isbn}"
+       serial = @Remote_cache.get "#{version}_#{isbn}"
        # create a new BookInStock object by passing the serial string into the from_cache method
-  #     book = BookInStock.from_cache serial
+       book = BookInStock.from_cache serial
      
        # increment the version of the book and the version entry
-  #     @Remote_cache.set "#{version + 1}_#{book.isbn}", book.to_cache
-  #     @Remote_cache.set "v_#{book.isbn}",version+1
+       @Remote_cache.set "#{version + 1}_#{book.isbn}", book.to_cache
+       @Remote_cache.set "v_#{book.isbn}",version+1
 
        
-  #     puts book
-  #  end
+       print " Version = #{version + 1}"
+       puts book
+    end
+end
+
+
+
+  
