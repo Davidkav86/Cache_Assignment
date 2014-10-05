@@ -36,6 +36,8 @@ require_relative 'book_in_stock'
                  :title => book.title, 
                  :price => book.price, 
                  :quantity => book.quantity )
+     objects = object_relational_mapper books
+     objects[0]
   end
 
   def addBook book
