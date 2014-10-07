@@ -7,7 +7,7 @@ require 'dalli'
     def initialize db_path
        @database = DataBase.new db_path
        @Remote_cache = Dalli::Client.new('localhost:11211')
-       # Relevant data structure(s) for local cache
+       @local_cache = Hash.new 
     end
     
     def start 
@@ -18,30 +18,50 @@ require 'dalli'
     end
 
     def findISBN isbn
+      
+       # if there is an entry in the local cache for the isbn
+      if @local_cache["v_#{isbn}"] != nil
+        
+        localVersion = getLocalVersion isbn
+        remoteVersion = @Remote_cache.get "v_#{isbn}"
+
+        if  localVersion == remoteVersion
+        # get the book and return it
+          book = getFromLocalCache isbn
+          print "Local cache accesed\n"
+          book
+        else
+          setLocalCache isbn
+          book = getFromLocalCache isbn
+          book
+        end
 
       # If there is no entry stored in the remote cache with the ISBN
-      if @Remote_cache.get("v_#{isbn}") == nil
-        
+      elsif @Remote_cache.get("v_#{isbn}") == nil
+
         # Test to make sure that a valid ISBN has been entered
         # This will prevent the program from crashing if an invalid ISBN has been entered
         if @database.findISBN isbn
 
            book = @database.findISBN isbn
-           # Create the version entry 
-           @Remote_cache.set "v_#{isbn}",1 
-           # Create the book entry
-           @Remote_cache.set "1_#{isbn}", book.to_cache 
+           # create the entry in the remote cache 
+           addRemoteCacheEntry book
+           # create the entry in the local cache
+           addLocalCacheEntry book
 
-           print " Cache set... \n" # for testing
            book
-
         else
-          
+          print "An invalid ISBN has been entered"  
         end
 
-
+      # there is an entry in the remote cache with the ISBN
       else
-         getFromRemoteCache isbn
+         # get the book from the remote cache
+         book = getFromRemoteCache isbn
+         # create the entry in the local cache
+         addLocalCacheEntry book
+
+         book
       end
        
     end
@@ -49,17 +69,6 @@ require 'dalli'
     def authorSearch(author)
 
       @database.authorSearch author
-
-       # if @Remote_cache.get("v_#{isbn}") == nil
-        
-       #   book = @database.findISBN isbn
-
-       #   @Remote_cache.set "v_#{isbn}",1    
-       #   @Remote_cache.set "1_#{isbn}", book.to_cache 
-
-       #   print " Cache set... \n"
-       #   puts book
-       # end
     end
 
     def updateBook book
@@ -68,23 +77,21 @@ require 'dalli'
 
        # If there is no entry stored in the remote cache
        if @Remote_cache.get("v_#{updatedBook.isbn}") == nil
-        
-         # Create the version entry 
-         @Remote_cache.set "v_#{updatedBook.isbn}",1 
-         # Create the book entry
-         @Remote_cache.set "1_#{updatedBook.isbn}", updateBook.to_cache 
 
-         puts "#{updatedBook.title}, by #{updatedBook.author} with ISBN #{updatedBook.isbn} has been updated"
+         addRemoteCacheEntry updatedBook
+
+         addLocalCacheEntry updateBook
+
+         puts "#{updatedBook.title}, by #{updatedBook.author} with ISBN - #{updatedBook.isbn} has been updated"
 
        else
-         # find the current version of the updated book
-         version = @Remote_cache.get "v_#{updatedBook.isbn}"
-     
-         # increment the version of the updated book and save the updates with it
-         @Remote_cache.set "#{version + 1}_#{updatedBook.isbn}", updatedBook.to_cache
-         @Remote_cache.set "v_#{updatedBook.isbn}",version+1
+         # update the remote cache
+         setRemoteCache updatedBook
 
-         puts "#{updatedBook.title}, by #{updatedBook.author} with ISBN #{updatedBook.isbn} has been updated"
+         # update the local cache to match the remote
+         setLocalCache updatedBook.isbn
+
+         puts "#{updatedBook.title}, by #{updatedBook.author} with ISBN - #{updatedBook.isbn} has been updated"
       end
       
     end
@@ -104,29 +111,56 @@ require 'dalli'
 
           @Remote_cache.delete "v_#{isbn}"
           @Remote_cache.delete "#{version}_#{isbn}"
+          
+           if @local_cache 
+             @local_cache.delete "v_#{isbn}"
+             @local_cache.delete "#{version}_#{isbn}"
+           end
 
-          puts "Book was deleted from database and remote cache"
+          puts "Book has deleted from database and remote cache"
 
        end
     end
+    
+    # adds a book to the local cache
+    def addLocalCacheEntry book
+      # Create the version entry 
+      @local_cache["v_#{book.isbn}"] = 1
+      # Create the book entry
+      @local_cache["1_#{book.isbn}"] = book.to_cache
 
-    def checkRemoteCache isbn
-      
-       # find the current version of the book
-       version = @Remote_cache.get "v_#{isbn}"
-      
-       # use the version number to get the correct version of the book     
-       serial = @Remote_cache.get "#{version}_#{isbn}"
-       # create a new BookInStock object by passing the serial string into the from_cache method
-       book = BookInStock.from_cache serial
+      print " Local Cache set... \n" # for testing
+    end
+
+    # adds a book to the remote cache
+    def addRemoteCacheEntry book
+      # Create the version entry 
+      @Remote_cache.set "v_#{book.isbn}",1 
+      # Create the book entry
+      @Remote_cache.set "1_#{book.isbn}", book.to_cache
+
+      print " Remote Cache set... \n" # for testing
+    end
+
+    def setRemoteCache book
+       # find the current version of the updated book
+       version = @Remote_cache.get "v_#{book.isbn}"
      
-       # increment the version of the book and the version entry
+       # increment the version of the updated book and save the updates with it
        @Remote_cache.set "#{version + 1}_#{book.isbn}", book.to_cache
        @Remote_cache.set "v_#{book.isbn}",version+1
+      
+    end
 
-       puts " Version = #{version + 1}"
+    def setLocalCache isbn 
+       version = @Remote_cache.get "v_#{isbn}"
 
-       book
+       @local_cache["v_#{isbn}"] = version
+
+       book = getFromRemoteCache isbn
+
+       @local_cache["#{version}_#{book.isbn}"] = book.to_cache
+
     end
 
     #
@@ -144,6 +178,32 @@ require 'dalli'
 
        book
 
+    end
+
+    #
+    # Retrieves a book from the local cache using the ISBN
+    #
+    def getFromLocalCache isbn
+
+       # find the current version of the book
+       version = getLocalVersion isbn
+      
+       # use the version number to get the correct version of the book     
+       serial = getLocalSerial "#{version}_#{isbn}"
+
+       # create a new BookInStock object by passing the serial string into the from_cache method
+       book = BookInStock.from_cache serial
+
+       book
+
+    end
+
+    def getLocalVersion isbn
+       @local_cache["v_#{isbn}"] 
+    end
+
+    def getLocalSerial key
+      @local_cache[key]
     end
 end
 

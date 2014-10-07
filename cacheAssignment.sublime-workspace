@@ -4,6 +4,34 @@
 		"selected_items":
 		[
 			[
+				"delete",
+				"deleted"
+			],
+			[
+				"del",
+				"delete"
+			],
+			[
+				"find",
+				"findISBN"
+			],
+			[
+				"bo",
+				"books"
+			],
+			[
+				"book",
+				"book"
+			],
+			[
+				"auth",
+				"authorSearch"
+			],
+			[
+				"databa",
+				"database"
+			],
+			[
 				"Re",
 				"Remote_cache"
 			],
@@ -48,10 +76,6 @@
 				"isbn"
 			],
 			[
-				"book",
-				"books_in_stock"
-			],
-			[
 				"sub",
 				"subjects"
 			],
@@ -84,19 +108,18 @@
 			}
 		},
 		{
-			"file": "commands/delete_book_command.rb",
-			"settings":
-			{
-				"buffer_size": 362,
-				"line_ending": "Unix",
-				"name": "delete_book_command.rb"
-			}
-		},
-		{
 			"file": "data_access.rb",
 			"settings":
 			{
-				"buffer_size": 1659,
+				"buffer_size": 4142,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "database.rb",
+			"settings":
+			{
+				"buffer_size": 1737,
 				"line_ending": "Unix"
 			}
 		},
@@ -109,11 +132,12 @@
 			}
 		},
 		{
-			"file": "database.rb",
+			"file": "commands/delete_book_command.rb",
 			"settings":
 			{
-				"buffer_size": 1675,
-				"line_ending": "Unix"
+				"buffer_size": 624,
+				"line_ending": "Unix",
+				"name": "delete_book_command.rb"
 			}
 		},
 		{
@@ -181,6 +205,7 @@
 	},
 	"file_history":
 	[
+		"/Users/david_kav/Desktop/College/ComponentDev/cacheAssignment/cacheAssignment.sublime-project",
 		"/Users/david_kav/Desktop/start/data_access2.rb",
 		"/Users/david_kav/Desktop/College/ComponentDev/cacheAssignment/commands/number_of_copies_command.rb",
 		"/Users/david_kav/Desktop/College/ComponentDev/cacheAssignment/commands/quit_command.rb",
@@ -318,45 +343,18 @@
 				},
 				{
 					"buffer": 2,
-					"file": "commands/delete_book_command.rb",
-					"settings":
-					{
-						"buffer_size": 362,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								313,
-								313
-							]
-						],
-						"settings":
-						{
-							"auto_name": "delete_book_command.rb",
-							"syntax": "Packages/Ruby/Ruby.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
 					"file": "data_access.rb",
 					"settings":
 					{
-						"buffer_size": 1659,
+						"buffer_size": 4142,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1640,
-								1640
+								983,
+								983
 							]
 						],
 						"settings":
@@ -367,6 +365,34 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "database.rb",
+					"settings":
+					{
+						"buffer_size": 1737,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								913,
+								913
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ruby/Ruby.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 206.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -383,8 +409,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								282,
+								282
 							]
 						],
 						"settings":
@@ -399,28 +425,28 @@
 				},
 				{
 					"buffer": 5,
-					"file": "database.rb",
+					"file": "commands/delete_book_command.rb",
 					"settings":
 					{
-						"buffer_size": 1675,
+						"buffer_size": 624,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1238,
-								1238
+								476,
+								476
 							]
 						],
 						"settings":
 						{
+							"auto_name": "delete_book_command.rb",
 							"syntax": "Packages/Ruby/Ruby.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 211.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
