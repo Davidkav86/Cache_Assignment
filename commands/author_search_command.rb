@@ -5,6 +5,7 @@ class AuthorSearchCommand < UserCommand
 	def initialize (data_source)
 		super (data_source)
 		@author = ''
+		@books = Array.new
 	end
 
 	def title 
@@ -18,7 +19,8 @@ class AuthorSearchCommand < UserCommand
    end
 
     def execute
-       @data_source.authorSearch(@author).each {|b| puts b }
+       books = @data_source.authorSearch(@author).each {|b| puts b }
+       @data_source.setComplexData books
 	end
 
 end

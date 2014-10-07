@@ -159,6 +159,8 @@ require 'dalli'
 
        book = getFromRemoteCache isbn
 
+       @local_cache.delete("#{version - 1}_#{book.isbn}")
+
        @local_cache["#{version}_#{book.isbn}"] = book.to_cache
 
     end
@@ -204,6 +206,36 @@ require 'dalli'
 
     def getLocalSerial key
       @local_cache[key]
+    end
+
+    def setComplexData books
+
+      authorKey = "bks_#{books[0].author}"
+      authorValue = ""
+      version = "!"
+      complexKey = "#{books[0].author}"
+      complexData = ""
+
+      books.each do |book|
+          authorValue += "#{book.isbn},"
+          version = @Remote_cache.get "v_#{book.isbn}"
+          complexKey += "_#{book.isbn}_#{version}"
+          complexData += "#{book.isbn},#{book.title},#{book.author},#{book.genre},#{book.quantity};"
+
+      end
+
+
+      puts "AuthorKey = #{authorKey} \n"
+      puts "AuthorValue = #{authorValue} \n"
+      puts "complexKey = #{complexKey} \n"
+      puts "complexData = #{complexData}"
+
+      @local_cache[authorKey] = authorValue
+      @local_cache[complexKey] = complexData
+
+    end
+
+    def updateComplexData
     end
 end
 

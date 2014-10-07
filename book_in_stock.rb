@@ -20,6 +20,10 @@ class BookInStock
      "#{@isbn},#{@title},#{@author},#{@genre},#{@price},#{@quantity}"
   end
 
+  def getISBN
+    @isbn
+  end
+
   def self.from_cache serialized
       fields = serialized.split(',')
       BookInStock.new fields[0], fields[1], fields[2], 
