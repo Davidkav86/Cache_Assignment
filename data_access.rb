@@ -67,8 +67,54 @@ require 'dalli'
     end
 
     def authorSearch(author)
+       
+       if @Remote_cache.get("bks_#{author}") == nil
+          if  @database.authorSearch author == nil
+            return nil
+          end
+          books = @database.authorSearch author
+          setComplexData books
+          books
+       else
+        authorValue = @Remote_cache.get("bks_#{author}")
 
-      @database.authorSearch author
+        isbnList = authorValue.split(",")
+        
+        complexKey = "#{author}"
+
+        isbnList.compact.each do |isbn|
+          version = @Remote_cache.get "v_#{isbn}"
+          if version == nil
+            version = "1"
+          end
+
+          complexKey += "_#{isbn}_#{version}"
+          puts "isbn = #{isbn}"
+        end
+        
+        complexData = @Remote_cache.get(complexKey)
+        puts "Complex Entity Data: #{complexData}"
+        
+        stringDataList = complexData.split(";")
+
+        books = []
+
+        stringDataList.each do |bookString|
+
+          tempList = bookString.split(",")
+          isbn = tempList[0]
+          title = tempList[1]
+          author = tempList[2]
+          genre = tempList[3]
+          quantity = tempList[4]
+          price = tempList[5]
+
+          book = BookInStock.new(isbn, title, author, genre, price, quantity)
+          books << book
+
+        end
+        books
+       end
     end
 
     def updateBook book
@@ -112,12 +158,12 @@ require 'dalli'
           @Remote_cache.delete "v_#{isbn}"
           @Remote_cache.delete "#{version}_#{isbn}"
           
-           if @local_cache 
+           if @local_cache
              @local_cache.delete "v_#{isbn}"
              @local_cache.delete "#{version}_#{isbn}"
            end
 
-          puts "Book has deleted from database and remote cache"
+          puts "Book has deleted from database remote cache"
 
        end
     end
@@ -209,18 +255,21 @@ require 'dalli'
     end
 
     def setComplexData books
-
+  
       authorKey = "bks_#{books[0].author}"
       authorValue = ""
-      version = "!"
+      version = "1"
       complexKey = "#{books[0].author}"
       complexData = ""
 
       books.each do |book|
           authorValue += "#{book.isbn},"
           version = @Remote_cache.get "v_#{book.isbn}"
+          if version == nil
+            version = "1"
+          end
           complexKey += "_#{book.isbn}_#{version}"
-          complexData += "#{book.isbn},#{book.title},#{book.author},#{book.genre},#{book.quantity};"
+          complexData += "#{book.isbn},#{book.title},#{book.author},#{book.genre},#{book.quantity},#{book.price};"
 
       end
 
@@ -230,12 +279,13 @@ require 'dalli'
       puts "complexKey = #{complexKey} \n"
       puts "complexData = #{complexData}"
 
-      @local_cache[authorKey] = authorValue
-      @local_cache[complexKey] = complexData
+      @Remote_cache.set authorKey, authorValue
+      @Remote_cache.set complexKey, complexData
+      
 
     end
 
-    def updateComplexData
+    def getComplexData 
     end
 end
 

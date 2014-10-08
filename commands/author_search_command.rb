@@ -19,8 +19,11 @@ class AuthorSearchCommand < UserCommand
    end
 
     def execute
-       books = @data_source.authorSearch(@author).each {|b| puts b }
-       @data_source.setComplexData books
+    	if @data_source.authorSearch(@author) == nil
+    		puts "You have entered an invalid author"
+    	else
+            @data_source.authorSearch(@author).each {|b| puts b }
+        end
 	end
 
 end
