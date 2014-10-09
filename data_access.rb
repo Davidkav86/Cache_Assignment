@@ -37,7 +37,7 @@ require 'dalli'
         end
 
       # If there is no entry stored in the remote cache with the ISBN
-      elsif @Remote_cache.get("v_#{isbn}") == nil
+      elsif @Remote_cache.get("v_#{isbn}")  == nil
 
         # Test to make sure that a valid ISBN has been entered
         # This will prevent the program from crashing if an invalid ISBN has been entered
@@ -50,8 +50,7 @@ require 'dalli'
            addLocalCacheEntry book
 
            book
-        else
-          print "An invalid ISBN has been entered"  
+        else 
         end
 
       # there is an entry in the remote cache with the ISBN
@@ -59,6 +58,7 @@ require 'dalli'
          # get the book from the remote cache
          book = getFromRemoteCache isbn
          # create the entry in the local cache
+         puts book
          addLocalCacheEntry book
 
          book
@@ -66,54 +66,17 @@ require 'dalli'
        
     end
 
-    def authorSearch(author)
-       
-       if @Remote_cache.get("bks_#{author}") == nil
-          if  @database.authorSearch author == nil
-            return nil
-          end
+    def authorSearch author
+
+      if @local_cache["bks_#{author}"] != nil
+          localCacheAuthorSearch author
+
+      elsif @Remote_cache.get("bks_#{author}") == nil
           books = @database.authorSearch author
           setComplexData books
           books
-       else
-        authorValue = @Remote_cache.get("bks_#{author}")
-
-        isbnList = authorValue.split(",")
-        
-        complexKey = "#{author}"
-
-        isbnList.compact.each do |isbn|
-          version = @Remote_cache.get "v_#{isbn}"
-          if version == nil
-            version = "1"
-          end
-
-          complexKey += "_#{isbn}_#{version}"
-          puts "isbn = #{isbn}"
-        end
-        
-        complexData = @Remote_cache.get(complexKey)
-        puts "Complex Entity Data: #{complexData}"
-        
-        stringDataList = complexData.split(";")
-
-        books = []
-
-        stringDataList.each do |bookString|
-
-          tempList = bookString.split(",")
-          isbn = tempList[0]
-          title = tempList[1]
-          author = tempList[2]
-          genre = tempList[3]
-          quantity = tempList[4]
-          price = tempList[5]
-
-          book = BookInStock.new(isbn, title, author, genre, price, quantity)
-          books << book
-
-        end
-        books
+      else
+        remoteCacheAuthorSearch author
        end
     end
 
@@ -144,28 +107,30 @@ require 'dalli'
 
     def addBook book
        @database.addBook book
+
+       updateComplexData book.author
     end
 
     def deleteBook isbn
      
+       book = @database.findISBN isbn
        @database.deleteBook isbn
 
        if @Remote_cache.get("v_#{isbn}") == nil
-          puts "Book has been deleted from database"
+          puts "Book with ISBN: #{isbn} has been deleted from database"
        else
           version = @Remote_cache.get "v_#{isbn}"
 
           @Remote_cache.delete "v_#{isbn}"
           @Remote_cache.delete "#{version}_#{isbn}"
           
-           if @local_cache
+           if getFromLocalCache isbn != nil
              @local_cache.delete "v_#{isbn}"
              @local_cache.delete "#{version}_#{isbn}"
            end
-
-          puts "Book has deleted from database remote cache"
-
+          puts "Book has with ISBN: #{isbn} deleted from database and relevant caches"
        end
+        updateComplexData book.author
     end
     
     # adds a book to the local cache
@@ -195,6 +160,8 @@ require 'dalli'
        # increment the version of the updated book and save the updates with it
        @Remote_cache.set "#{version + 1}_#{book.isbn}", book.to_cache
        @Remote_cache.set "v_#{book.isbn}",version+1
+
+       @Remote_cache.delete "#{version}_#{book.isbn}"
       
     end
 
@@ -239,6 +206,10 @@ require 'dalli'
        # use the version number to get the correct version of the book     
        serial = getLocalSerial "#{version}_#{isbn}"
 
+       if serial == nil
+        return nil
+       end
+
        # create a new BookInStock object by passing the serial string into the from_cache method
        book = BookInStock.from_cache serial
 
@@ -246,8 +217,56 @@ require 'dalli'
 
     end
 
+    def remoteCacheAuthorSearch author
+       authorValue = @Remote_cache.get("bks_#{author}")
+
+        isbnList = authorValue.split(",")
+        
+        complexKey = "#{author}"
+
+        isbnList.compact.each do |isbn|
+          version = @Remote_cache.get "v_#{isbn}"
+          if version == nil
+            version = "1"
+          end
+          complexKey += "_#{isbn}_#{version}"
+        end
+        
+        complexData = @Remote_cache.get(complexKey)
+
+        convertComplexDataStringToBookObjects complexData, author
+    end
+
+    def localCacheAuthorSearch author
+       authorValue = getLocalAuthorValue author
+
+        isbnList = authorValue.split(",")
+        
+        complexKey = "#{author}"
+
+        isbnList.compact.each do |isbn|
+          version = @Remote_cache.get "v_#{isbn}"
+          if version == nil
+            version = "1"
+          end
+          complexKey += "_#{isbn}_#{version}"
+        end
+        
+        complexData = getLocalComplexData complexKey
+
+        convertComplexDataStringToBookObjects complexData, author
+    end
+
     def getLocalVersion isbn
        @local_cache["v_#{isbn}"] 
+    end
+
+    def getLocalAuthorValue author
+      @local_cache["bks_#{author}"]
+    end
+
+    def getLocalComplexData complexKey
+      @local_cache[complexKey]
     end
 
     def getLocalSerial key
@@ -273,19 +292,92 @@ require 'dalli'
 
       end
 
-
-      puts "AuthorKey = #{authorKey} \n"
-      puts "AuthorValue = #{authorValue} \n"
-      puts "complexKey = #{complexKey} \n"
-      puts "complexData = #{complexData}"
+      puts "Complex Entity Data = #{complexData}"
 
       @Remote_cache.set authorKey, authorValue
       @Remote_cache.set complexKey, complexData
-      
+
+      @local_cache[authorKey] = authorValue
+      @local_cache[complexKey] = complexData
 
     end
 
-    def getComplexData 
+    def updateComplexData author
+        authorValue = @Remote_cache.get("bks_#{author}")
+
+        if authorValue == nil
+          return
+        end
+
+        isbnList = authorValue.split(",")
+        
+        complexKey = "#{author}"
+
+        isbnList.compact.each do |isbn|
+          version = @Remote_cache.get "v_#{isbn}"
+          if version == nil
+            version = "1"
+          end
+          complexKey += "_#{isbn}_#{version}"
+        end
+        
+        @Remote_cache.delete "bks_#{author}"
+        @Remote_cache.delete complexKey
+
+        @local_cache.delete "bks_#{author}"
+        @local_cache.delete complexKey
+
+        books = @database.authorSearch author
+        setComplexData books
+        books
+    end
+
+    def convertComplexDataStringToBookObjects complexData, author
+        if complexData == nil
+          books = updateComplexData author
+          return books
+        end
+        
+        stringDataList = complexData.split(";")
+        books = []
+
+        stringDataList.each do |bookString|
+
+          tempList = bookString.split(",")
+          isbn = tempList[0]
+          title = tempList[1]
+          author = tempList[2]
+          genre = tempList[3]
+          quantity = tempList[4]
+          price = tempList[5]
+
+          book = BookInStock.new(isbn, title, author, genre, price, quantity)
+          books << book
+
+        end
+        puts "Complex Entity Data: #{complexData}"
+        books
+    end
+
+    def printCache input
+        if input == "1"
+          i = 1
+          puts "Contents of Remote Cache"
+            @Remote_cache.each do |index|
+              puts "#{i}: #{index}"
+              i = i + 1
+            end
+        elsif input == "2"
+          i = 1
+          puts "Contents of Local Cache"
+            @local_cache.each do |index|
+              puts "#{i}: #{index}"
+              i = i + 1
+            end           
+        else
+          puts "You have entered a wrong number. #{input}"
+          puts "Please enter 1 or 2."
+        end
     end
 end
 

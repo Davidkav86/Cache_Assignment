@@ -5,6 +5,7 @@ require_relative 'commands/update_book_command'
 require_relative 'commands/quit_command'
 require_relative 'commands/add_book_command'
 require_relative 'commands/delete_book_command'
+require_relative 'commands/print_cache_command'
 
 data_source = DataAccess.new (ARGV[0])
 data_source.start
@@ -15,6 +16,7 @@ commands = [
 	UpdateBookCommand.new(data_source),
 	AddBookCommand.new(data_source),
 	DeleteBookCommand.new(data_source),
+	PrintCacheCommand.new(data_source),
 	QuitCommand.new(data_source),
 ]	
 last_command = commands.size() -1
