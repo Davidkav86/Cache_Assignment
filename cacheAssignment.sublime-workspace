@@ -4,6 +4,138 @@
 		"selected_items":
 		[
 			[
+				"ec",
+				"each"
+			],
+			[
+				"complex",
+				"complexKey"
+			],
+			[
+				"author",
+				"authorKey"
+			],
+			[
+				"complexdata",
+				"complexData"
+			],
+			[
+				"getLocal",
+				"getLocalComplexData"
+			],
+			[
+				"get",
+				"getLocalAuthorValue"
+			],
+			[
+				"auth",
+				"authorSearch"
+			],
+			[
+				"up",
+				"updateComplexData"
+			],
+			[
+				"comple",
+				"complexKey"
+			],
+			[
+				"N",
+				"new"
+			],
+			[
+				"B",
+				"BookInStock"
+			],
+			[
+				"book",
+				"bookString"
+			],
+			[
+				"string",
+				"stringDataList"
+			],
+			[
+				"strin",
+				"stringDataList"
+			],
+			[
+				"co",
+				"complexKey"
+			],
+			[
+				"ISBN",
+				"ISBNList"
+			],
+			[
+				"I",
+				"ISBNList"
+			],
+			[
+				"isb",
+				"ISBN"
+			],
+			[
+				"au",
+				"authorKey"
+			],
+			[
+				"autho",
+				"authorKey"
+			],
+			[
+				"set",
+				"set"
+			],
+			[
+				"Re",
+				"Remote_cache"
+			],
+			[
+				"compe",
+				"complexEntry"
+			],
+			[
+				"ge",
+				"getISBN"
+			],
+			[
+				"loca",
+				"local_cache"
+			],
+			[
+				"update",
+				"updatedBook"
+			],
+			[
+				"add",
+				"addLocalCacheEntry"
+			],
+			[
+				"remte",
+				"remote"
+			],
+			[
+				"getFrom",
+				"getFromRemoteCache"
+			],
+			[
+				"Remote",
+				"Remote_cache"
+			],
+			[
+				"getLo",
+				"getLocalSerial"
+			],
+			[
+				"local",
+				"local_cache"
+			],
+			[
+				"loc",
+				"local_cache"
+			],
+			[
 				"delete",
 				"deleted"
 			],
@@ -20,20 +152,8 @@
 				"books"
 			],
 			[
-				"book",
-				"book"
-			],
-			[
-				"auth",
-				"authorSearch"
-			],
-			[
 				"databa",
 				"database"
-			],
-			[
-				"Re",
-				"Remote_cache"
 			],
 			[
 				"wh",
@@ -95,7 +215,7 @@
 			"file": "book_in_stock.rb",
 			"settings":
 			{
-				"buffer_size": 753,
+				"buffer_size": 826,
 				"line_ending": "Unix"
 			}
 		},
@@ -103,7 +223,7 @@
 			"file": "driver.rb",
 			"settings":
 			{
-				"buffer_size": 1136,
+				"buffer_size": 1221,
 				"line_ending": "Unix"
 			}
 		},
@@ -111,7 +231,7 @@
 			"file": "data_access.rb",
 			"settings":
 			{
-				"buffer_size": 4142,
+				"buffer_size": 10106,
 				"line_ending": "Unix"
 			}
 		},
@@ -144,7 +264,15 @@
 			"file": "commands/author_search_command.rb",
 			"settings":
 			{
-				"buffer_size": 388,
+				"buffer_size": 414,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "commands/print_cache_command.rb",
+			"settings":
+			{
+				"buffer_size": 439,
 				"line_ending": "Unix"
 			}
 		},
@@ -161,22 +289,6 @@
 			"settings":
 			{
 				"buffer_size": 965,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/david_kav/Desktop/College/ComponentDev/cachedemo/memcached.rb",
-			"settings":
-			{
-				"buffer_size": 745,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/david_kav/Desktop/College/ComponentDev/cachedemo/book_in_stock_demo.rb",
-			"settings":
-			{
-				"buffer_size": 834,
 				"line_ending": "Unix"
 			}
 		}
@@ -205,6 +317,10 @@
 	},
 	"file_history":
 	[
+		"/Users/david_kav/.boto",
+		"/Users/david_kav/.pythonrc",
+		"/Users/david_kav/Desktop/College/ComponentDev/cachedemo/book_in_stock_demo.rb",
+		"/Users/david_kav/Desktop/College/ComponentDev/cachedemo/memcached.rb",
 		"/Users/david_kav/Desktop/College/ComponentDev/cacheAssignment/cacheAssignment.sublime-project",
 		"/Users/david_kav/Desktop/start/data_access2.rb",
 		"/Users/david_kav/Desktop/College/ComponentDev/cacheAssignment/commands/number_of_copies_command.rb",
@@ -283,7 +399,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -291,15 +407,15 @@
 					"file": "book_in_stock.rb",
 					"settings":
 					{
-						"buffer_size": 753,
+						"buffer_size": 826,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								475,
-								475
+								656,
+								656
 							]
 						],
 						"settings":
@@ -319,15 +435,15 @@
 					"file": "driver.rb",
 					"settings":
 					{
-						"buffer_size": 1136,
+						"buffer_size": 1221,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								577,
-								577
+								662,
+								662
 							]
 						],
 						"settings":
@@ -346,15 +462,15 @@
 					"file": "data_access.rb",
 					"settings":
 					{
-						"buffer_size": 4142,
+						"buffer_size": 10106,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								983,
-								983
+								9938,
+								9938
 							]
 						],
 						"settings":
@@ -364,7 +480,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1665.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -392,7 +508,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 206.0,
+						"translation.y": 185.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -456,15 +572,15 @@
 					"file": "commands/author_search_command.rb",
 					"settings":
 					{
-						"buffer_size": 388,
+						"buffer_size": 414,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								293,
-								293
+								125,
+								125
 							]
 						],
 						"settings":
@@ -479,6 +595,32 @@
 				},
 				{
 					"buffer": 7,
+					"file": "commands/print_cache_command.rb",
+					"settings":
+					{
+						"buffer_size": 439,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								424,
+								424
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ruby/Ruby.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
 					"file": "commands/update_book_command.rb",
 					"settings":
 					{
@@ -489,8 +631,8 @@
 						"selection":
 						[
 							[
-								907,
-								671
+								328,
+								328
 							]
 						],
 						"settings":
@@ -506,7 +648,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 9,
 					"file": "commands/add_book_command.rb",
 					"settings":
 					{
@@ -525,62 +667,6 @@
 						{
 							"auto_name": "",
 							"syntax": "Packages/Ruby/Ruby.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "/Users/david_kav/Desktop/College/ComponentDev/cachedemo/memcached.rb",
-					"settings":
-					{
-						"buffer_size": 745,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								338,
-								338
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Ruby/Ruby.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "/Users/david_kav/Desktop/College/ComponentDev/cachedemo/book_in_stock_demo.rb",
-					"settings":
-					{
-						"buffer_size": 834,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Ruby/Ruby.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
